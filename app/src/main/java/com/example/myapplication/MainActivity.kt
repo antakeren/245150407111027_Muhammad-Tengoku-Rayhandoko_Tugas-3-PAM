@@ -1,15 +1,16 @@
 package com.example.myapplication
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +18,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    Activity1Screen()
+                    AppNavigation()
                 }
             }
         }
@@ -25,40 +26,22 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Activity1Screen() {
-    val context = LocalContext.current
-    var textInput by remember { mutableStateOf("") }
+fun AppNavigation() {
+    val navController = rememberNavController()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp)
+    NavHost(
+        navController = navController,
+        startDestination = "screen1"
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
-
-        UserHeader()
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        OutlinedTextField(
-            value = textInput,
-            onValueChange = { textInput = it },
-            label = { Text("Masukkan Pesan") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                val intent = Intent(context, ActivityDua::class.java).apply {
-                    putExtra("EXTRA_TEXT", textInput)
+        composable("screen1") {
+            Screen1(
+                onNavigateToScreen2 = {
+                    navController.navigate("screen2")
                 }
-                context.startActivity(intent)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Kirim ke Activity 2")
+            )
+        }
+        composable("screen2") {
+            Screen2()
         }
     }
 }
